@@ -2,7 +2,7 @@
 
 env:
   repo:            "https://github.com/Malik20A/pet-clinic.git" 
-  app_version:     "main"
+  app_version:     "master"
   repo_region:     "us-central1"
   project_id:      "${{ secrets.PROJECT_ID }}" 
   app_name:        "pet-clinic"
