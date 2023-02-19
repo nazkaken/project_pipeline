@@ -1,5 +1,5 @@
 env:
-  repo:            "https://github.com/Malik20A/pet-clinic.git" 
+  repo:            "https://github.com/nazkaken/pet-clinic.git" 
   app_version:     "main"
   repo_region:     "us-central1"
   project_id:      "${{ secrets.PROJECT_ID }}" 
@@ -8,9 +8,9 @@ env:
 
   # Sonar stuff, please update accordingly 
   enable_sonar:    "true"
-  sonar_organization: "malik20a"
-  sonar_projectKey: "petclinic"
-  sonar_login: "59e267cd20e3fd290cee3344bf43d669364cf5f8" 
+  sonar_organization: "project12345"
+  sonar_projectKey: "project12345_sonarqube-for-project"
+  sonar_login: "2ed29166a76e380ee23f577001b4bcff5177f0e6" 
 
 name: ContinuousDelivery
 
