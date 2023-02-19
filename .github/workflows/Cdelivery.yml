@@ -11,7 +11,7 @@ env:
   # Sonar stuff, please update accordingly 
   enable_sonar:    "true"
   sonar_organization: "project12345"
-  sonar_projectKey: "roject12345_sonarqube-for-project"
+  sonar_projectKey: "project12345_sonarqube-for-project"
   sonar_login: "2ed29166a76e380ee23f577001b4bcff5177f0e6" 
 
 name: ContinuousDelivery
@@ -55,7 +55,7 @@ jobs:
       - name: Switch Branches
         working-directory: ${{ env.app_name }}
         run: |
-          git -X switch ${{ env.app_version }}
+          git checkout ${{ env.app_version }}
           ls -l
       # Runs a set of commands using the runners shell
       - name: Remove Old Images
