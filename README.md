@@ -1,6 +1,6 @@
  # Project Pipeline
-## This project uses a continuous delivery pipeline to automate the deployment of the Spring PetClinic web application to a Google Cloud Platform (GCP) environment.
-### The pipeline runs on a GitHub Actions workflow and it has a job called *image-build.* This job is responsible for *building a Docker image, tagging it, and pushing it to a container registry* in Google Cloud Platform (GCP).                                                                                                                             
+## This project uses a continuous delivery pipeline to automate the deployment of the PetClinic web application to a Google Cloud Platform (GCP) environment.
+### The pipeline runs on a GitHub Actions workflow and it has a job called *image-build.* This job is responsible for *building a Docker image, tagging it, and pushing it to a container registry* in Google Cloud Platform.                                                                                                                             
 ## **Prerequisites**
 ### Before setting up the pipeline, you'll need to have the following prerequisites:
 * A GitHub account
@@ -26,7 +26,7 @@
 ```
 .github/workflows/pipeline.yml.
 ```
-7. The pipeline uses environment variables defined at the beginning of the file to define the repository URL, *the application version, the repository region, the GCP project ID, the application name, and the new tag version.* There are also *Sonar-related environment variables* that can be used to enable or disable SonarQube scanning. The workflow is triggered when code is pushed to the main branch and it runs on an Ubuntu virtual machine hosted by GitHub. Modify the values of the environment variables in the pipeline.yml file to match your project setup:
+7. The pipeline uses environment variables defined at the beginning of the file to define the repository URL, *the application version, the repository region, the GCP project ID, the application name, and the new tag version.* There are also *Sonar-related environment variables* that can be used to enable or disable SonarQube scanning. Modify the values of the environment variables in the pipeline.yml file to match your project setup:
     * **repo:** The URL of your project repository
     * **app_version:** The version of the application to deploy (e.g., main)
     * **repo_region:** The GCP region where you want to deploy your application (e.g., us-central1)
@@ -52,18 +52,24 @@ env:
   sonar_projectKey: "petclinic"
   sonar_login: "59e267cd20e3fd290cee3344bf43d669364cf5f8"
   ```
-
-## **Continuous Deployment Process :**
-We have the image and now we have to create a helm from this image, and use terraform to deploy this to our kubernetes system.
-*  Create new private repo
-*  Clone the repo with SSH option
-*  Generate helm with *helm create* command
-*  You have to change repository name and port number
-*  Deploy the application
-
+#### Cdelivery  YAML file defines a workflow that runs when code is pushed to the main branch. It uses the docker/build-push-action GitHub Action to build and push the Docker image. The tags parameter specifies the name and tag for the Docker image.
 ```
-# Runs a set of commands using the runners shell
-      - name: Deploy Application
+- name: Setup sonarqube
+        if: ${{env.enable_sonar == 'true'}}
+        uses: warchant/setup-sonar-scanner@v3
+      - name: Run sonarqube
+        if: ${{env.enable_sonar == 'true'}}
+        run: sonar-scanner
+            -Dsonar.organization=${{ env.sonar_organization }}                              
+            -Dsonar.projectKey=${{ env.sonar_projectKey }}                         
+            -Dsonar.login=${{ env.sonar_login }}                                   
+            -Dsonar.host.url=https://sonarcloud.io
+```
+this block of code scans the content with sonarqube and and verifies if it does not have any vulnerability.
+#### Once you have completed these steps, your GitHub Actions workflow will automatically build and push the Docker image to Google Artifact registry. You can customize this workflow to suit your specific needs, such as building different images for different branches or pushing the image to a different Docker registry.
+ 
+```
+- name: Deploy Application
         working-directory: "custom_helm_chart"
         run: |
           terraform apply   \
@@ -76,10 +82,9 @@ We have the image and now we have to create a helm from this image, and use terr
           -var project_id="${{ secrets.PROJECT_ID }}" \
           -var environment="${{ env.environment }}" \
           --auto-approve
-
- ```         
-          
-
+```
+  #### Using a custom Helm chart for continuous deployment enables you to automate the deployment of your application changes to production using a CI/CD tool and Kubernetes.
+      
 ## **Using the Pipeline**
 #### Once you have set up the pipeline, you can use it to deploy new versions of web application to your GCP environment.
 #### To trigger the pipeline, simply push changes to the main branch of your project repository. The pipeline will automatically build a new Docker image of the application, tag it with a unique version number, and push it to the Google Container Registry in your GCP project. The pipeline will then deploy the new image to a Project Infrastructure cluster, making it publicly accessible at the service URL.
